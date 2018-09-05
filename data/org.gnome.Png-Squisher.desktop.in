@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=png-squisher
+Exec=png-squisher
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

@@ -1,0 +1,7 @@
+data/org.gnome.Png-Squisher.desktop.in
+data/org.gnome.Png-Squisher.appdata.xml.in
+data/org.gnome.Png-Squisher.gschema.xml
+src/png-squisher-window.ui
+src/main.c
+src/png-squisher-window.c
+
