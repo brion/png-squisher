@@ -42,7 +42,7 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkProgressBar" id="progressor">
+          <object class="GtkLabel" id="statuser">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
           </object>
@@ -56,13 +56,20 @@
           <object class="GtkViewport">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="shadow_type">none</property>
             <child>
-              <object class="GtkImage" id="displayer">
-                <property name="name">displayer</property>
+              <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="stock">gtk-missing-image</property>
-                <property name="icon_size">6</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <object class="GtkImage" id="displayer">
+                  <property name="name">displayer</property>
+                  <property name="visible">True</property>
+                  <property name="can_focus">False</property>
+                  <property name="stock">gtk-missing-image</property>
+                  <property name="icon_size">6</property>
+                 </object>
+                </child>
               </object>
             </child>
           </object>

@@ -1,10 +1,10 @@
 {
-    "app-id": "org.gnome.Png-Squisher",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "3.28",
-    "sdk": "org.gnome.Sdk",
-    "command": "png-squisher",
-    "finish-args": [
+    "app-id" : "org.gnome.Png-Squisher",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "3.28",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "png-squisher",
+    "finish-args" : [
         "--share=network",
         "--share=ipc",
         "--socket=x11",
@@ -14,14 +14,14 @@
         "--talk-name=ca.desrt.dconf",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
     ],
-    "build-options": {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
-        "env": {
-            "V": "1"
+    "build-options" : {
+        "cflags" : "-O2 -g",
+        "cxxflags" : "-O2 -g",
+        "env" : {
+            "V" : "1"
         }
     },
-    "cleanup": [
+    "cleanup" : [
         "/include",
         "/lib/pkgconfig",
         "/man",
@@ -32,16 +32,18 @@
         "*.la",
         "*.a"
     ],
-    "modules": [
+    "modules" : [
         {
-            "name": "png-squisher",
-            "buildsystem": "meson",
-            "config-opts": [ "--libdir=lib" ],
-            "builddir": true,
-            "sources": [
+            "name" : "png-squisher",
+            "buildsystem" : "meson",
+            "config-opts" : [
+                "--libdir=lib"
+            ],
+            "builddir" : true,
+            "sources" : [
                 {
-                    "type": "git",
-                    "url": "file:///home/brion/src/png/png-squisher"
+                    "type" : "git",
+                    "url" : "file:///home/brion/src/png/png-squisher"
                 }
             ]
         }

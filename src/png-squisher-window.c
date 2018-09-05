@@ -38,7 +38,7 @@ struct _PngSquisherWindow
   GtkHeaderBar        *header_bar;
   GtkButton           *opener;
   GtkButton           *saver;
-  GtkProgressBar      *progressor;
+  GtkLabel            *statuser;
   GtkImage            *displayer;
 };
 
@@ -53,8 +53,17 @@ png_squisher_window_class_init (PngSquisherWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, header_bar);
   gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, opener);
   gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, saver);
-  gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, progressor);
+  gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, statuser);
   gtk_widget_class_bind_template_child (widget_class, PngSquisherWindow, displayer);
+}
+
+static void
+on_size_allocate (GtkWidget         *sender,
+                  GdkRectangle      *allocation,
+                  PngSquisherWindow *self)
+{
+  // hackkkkkk
+  //self->scroller
 }
 
 static void
@@ -72,9 +81,6 @@ on_opener_clicked (GtkButton *sender, PngSquisherWindow *self)
   if (res == GTK_RESPONSE_ACCEPT)
     {
       char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-      printf("YEAH %s\n", filename);
-
-      // @todo open file and load it in the displayer
 
       gtk_image_set_from_file (GTK_IMAGE (self->displayer), filename);
       
@@ -90,15 +96,67 @@ on_opener_clicked (GtkButton *sender, PngSquisherWindow *self)
 static void
 on_saver_clicked (GtkButton *sender, PngSquisherWindow *self)
 {
-  printf("BYEEEE\n");
+  GtkWidget *chooser = gtk_file_chooser_dialog_new ("Save PNG file",
+                                                    GTK_WINDOW (self),
+                                                    GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                    GTK_STOCK_CANCEL,
+                                                    GTK_RESPONSE_CANCEL,
+                                                    GTK_STOCK_SAVE,
+                                                    GTK_RESPONSE_ACCEPT,
+                                                    NULL);
+  gint res = gtk_dialog_run (GTK_DIALOG (chooser));
+  if (res == GTK_RESPONSE_ACCEPT)
+    {
+      char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+      // Warning: we don't own a reference here. Don't free it!
+      GdkPixbuf *pixbuf = gtk_image_get_pixbuf (self->displayer);
+
+      GDateTime *now = g_date_time_new_now_local();
+      char *creation_time = g_date_time_format (now, "%c");
+
+      if (gdk_pixbuf_save (pixbuf, filename, "png", NULL,
+                           "tEXt::Software", "png-squisher",
+                           "tEXt::Creation Time", creation_time,
+                           NULL))
+        {
+          GDateTime *then = g_date_time_new_now_local ();
+          GTimeSpan delta_us = g_date_time_difference (then, now);
+          long delta_ms = delta_us / 1000;
+
+          gchar *delta_label = g_strdup_printf ("%ld ms", delta_ms);
+          gtk_label_set_label (self->statuser, delta_label);
+          g_free(delta_label);
+
+          printf("HEY40\n");
+          g_date_time_unref (then);
+        }
+      else
+        {
+          gchar *err_label = g_strdup_printf ("Error saving %s", filename);
+          gtk_label_set_label (self->statuser, err_label);
+          g_free(err_label);
+        }
+
+      g_free (creation_time);
+
+      g_date_time_unref (now);
+
+      g_free (filename);
+    }
+
+  gtk_widget_destroy (chooser);
 }
 
 static void
 png_squisher_window_init (PngSquisherWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect(self, "size_allocate", (GCallback)on_size_allocate, (void *)self);
   g_signal_connect(self->opener, "clicked", (GCallback)on_opener_clicked, (void *)self);
   g_signal_connect(self->saver, "clicked", (GCallback)on_saver_clicked, (void *)self);
+
   gtk_widget_set_state_flags(GTK_WIDGET(self->saver), GTK_STATE_FLAG_INSENSITIVE, TRUE);
 }
 
